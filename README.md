@@ -1,113 +1,187 @@
 # Discord Tribune Schedule Management Bot
 
-## Overview
-A specialized bot to organize and coordinate tribunes (streams/live sessions) on a Discord server. It automates schedule creation, participant sign‑ups, session management, and auto-republishing of the schedule message.
+## Описание
+Специализированный бот для организации и координации трибун (стримов/активностей) на Discord сервере. Автоматизирует создание расписания, регистрацию участников и управление сессиями.
 
-## Key Features
-- 📅 Two week schemes:
-  - Week 1: Monday, Wednesday, Friday, Sunday
-  - Week 2: Tuesday, Thursday, Saturday
-- 🕒 Time slots: 21:00–22:00, 22:00–23:00, 23:00–00:00
-- 👥 Interactive sign-up via buttons and modals
-- 🧩 Participant roles: host, backup
-- 🔄 Auto-update and auto-republish of the schedule message
-- 🧠 Registration and changes history
-- 🛡️ Error handling, validation, and session timeouts
+## Основные возможности
+- 📅 Гибкая настройка дней недели через команды
+- 🕒 Настраиваемые временные слоты для каждого дня (2 части)
+- 👥 Интерактивная запись через кнопки и модальные окна
+- 🔄 Автоматическое обновление и перепубликация расписания (каждый понедельник в 00:00)
+- 🧠 История регистраций и изменений (30 дней)
+- 🛡️ Обработка ошибок, валидация и контроль ролей
+- ⚙️ Динамическая конфигурация через JSON файлы
 
-## Tech Stack
-- Language: JavaScript (Node.js)
-- Packages:
-  - discord.js v14.19.3 — Discord API
-  - node-schedule v2.1.1 — task scheduling (republish/updates)
-  - nodemon v3.0.1 — dev auto-restart
-  - dotenv v16.5.0 — environment variables
-- Data storage: JSON files (schedule, history, service IDs)
+## Технологический стек
+- **Язык:** JavaScript (Node.js)
+- **Основные зависимости:**
+  - `discord.js` v14.19.3 — работа с Discord API
+  - `node-schedule` v2.1.1 — планирование задач (автоматическая перепубликация)
+  - `dotenv` v16.5.0 — управление переменными окружения
+- **Dev-зависимости:**
+  - `nodemon` v3.0.1 — автоперезагрузка в режиме разработки
+- **Хранилище данных:** JSON файлы (data.json, history.json, storage.json)
 
-## Installation & Setup
-### Requirements
+## Установка и настройка
+
+### Требования
 - Node.js 16.9.0+
 - npm
-- Discord account and an app in Discord Developer Portal
+- Discord аккаунт и приложение в Discord Developer Portal
 
-### Steps
-1. Clone the repository:
+### Шаги установки
+1. **Клонировать репозиторий:**
+   ```bash
    git clone https://github.com/username/tribunebot.git
    cd tribunebot
-2. Install dependencies:
+   ```
+
+2. **Установить зависимости:**
+   ```bash
    npm install
-3. Configure:
-   - Option A (recommended) via .env in project root:
-     DISCORD_TOKEN=YOUR_BOT_TOKEN
-     CHANNEL_ID=SCHEDULE_CHANNEL_ID
-   - Option B via config.json:
-     {
-       "token": "YOUR_BOT_TOKEN",
-       "channelId": "SCHEDULE_CHANNEL_ID"
-     }
-4. Enable privileged intents in Discord Developer Portal:
-   - Bot → enable SERVER MEMBERS INTENT and MESSAGE CONTENT INTENT
-5. Register slash commands:
-   node deploy-commands.js
-6. Run:
-   - Production: npm start
-   - Development (auto-restart): npm run dev
+   ```
 
-## Usage
-### Slash Commands
-- /week1 — create schedule for week 1 (Mon, Wed, Fri, Sun)
-- /manage — manage the active schedule message (update/republish)
-- /register — manual registration/adjustment (admins)
-- /leave — unregister
-- /history — show changes/registrations history
-- (Optional) /week2 — create schedule for week 2 (Tue, Thu, Sat), if enabled
+3. **Настроить конфигурацию:**
 
-Note: Buttons under the schedule message trigger the sign-up interface: select day, time slot, and role.
+   Создайте файл `config.json` в корне проекта:
+   ```json
+   {
+     "token": "YOUR_BOT_TOKEN",
+     "channelId": "SCHEDULE_CHANNEL_ID",
+     "clientId": "YOUR_CLIENT_ID",
+     "guildId": "YOUR_GUILD_ID",
+     "broadcasterRoleId": "BROADCASTER_ROLE_ID",
+     "leaveChannelId": "LEAVE_CHANNEL_ID",
+     "adminRoleId": "ADMIN_ROLE_ID"
+   }
+   ```
 
-### Typical Flow
-1. Admin runs /week1 to publish a schedule.
-2. Bot posts a message with sign-up buttons.
-3. Members register via buttons/modals.
-4. The schedule message auto-updates.
-5. Scheduled jobs can republish the message when needed.
+4. **Включить привилегированные интенты:**
+   - Перейти в Discord Developer Portal → Bot
+   - Включить `SERVER MEMBERS INTENT` и `MESSAGE CONTENT INTENT`
 
-## Project Structure
-- src/index.js — bot entry point
-- src/commands — slash command implementations (/week1, /manage, /register, /leave, /history)
-- src/handlers — interactions handling, message updates, unregister button
-- src/features — signup and management logic (UI, modals, handlers)
-- src/jobs/autoRepublish.js — scheduled jobs for republishing/updates
-- src/services — data handling (schedule, history, storage, logging)
-- src/tribunes — formatters and time slices
-- src/utils — helpers (dates, roles, texts, embeds)
-- config.json or .env — configuration
-- data.json / history.json / storage.json — schedule data, history, and service info
+5. **Запустить бота:**
+   - **Продакшн:** `npm start`
+   - **Разработка:** `npm run dev`
 
-## Configuration
-- .env:
-  - DISCORD_TOKEN — bot token
-  - CHANNEL_ID — channel ID for schedule publishing
-- config.json:
-  - token — bot token
-  - channelId — channel ID
-- Additional parameters may be declared in src/config.js and constants.js if needed.
+## Использование
 
-## npm Scripts
-- npm start — run the bot
-- npm run dev — run in development mode (nodemon)
-- node deploy-commands.js — register commands
+### Slash команды
+- `/week1` — опубликовать расписание на неделю (использует активные дни из конфигурации)
+- `/manage` — управление участниками (только для Broadcaster)
+- `/history` — показать историю действий за последние 30 дней
+- `/schedule` — ручная настройка расписания (только Broadcaster):
+  - `set-time` — изменить время части для дня
+  - `add-day` — добавить день в расписание
+  - `remove-day` — удалить день из расписания
+  - `list` — показать текущие активные дни и время
+  - `set-days` — задать активные дни для команды /week1
 
-## Development Tips
-- Add new commands to src/commands and register via deploy-commands.js.
-- Adjust schedule formatting in the formatting module.
-- Modify time slots and role logic in corresponding utils/constants.
-- Use stored message IDs and atomic updates for stability.
+### Типичный рабочий процесс
+1. Администратор настраивает активные дни через `/schedule set-days`
+2. Запускает `/week1` для публикации расписания
+3. Бот публикует сообщение с кнопками для записи
+4. Участники регистрируются через кнопки
+5. Расписание автоматически обновляется
+6. Каждый понедельник в 00:00 расписание автоматически перепубликуется
 
-## Troubleshooting
-- “Used disallowed intents”: enable required intents in Discord Developer Portal.
-- Bot not responding: check slash command registration and token/permissions.
-- Message not updating: ensure the bot can edit messages in the channel.
-- Registration conflicts: review validation for roles/slots and the change history.
+## Структура проекта
+```
+tribunebot/
+├── src/
+│   ├── index.js              # Точка входа
+│   ├── config.js             # Загрузка config.json
+│   ├── constants.js          # Константы приложения
+│   ├── state.js              # Глобальное состояние
+│   ├── commands/             # Slash команды
+│   │   ├── register.js       # Регистрация команд
+│   │   ├── week1.js          # Публикация расписания
+│   │   ├── manage.js         # Управление участниками
+│   │   ├── history.js        # История действий
+│   │   ├── schedule.js       # Настройка расписания
+│   │   └── ...
+│   ├── handlers/             # Обработчики взаимодействий
+│   │   └── interactionCreate.js
+│   ├── features/             # Основная логика
+│   │   ├── signup/           # Логика записи
+│   │   ├── manage/           # Логика управления
+│   │   └── panel/            # Панель управления
+│   ├── jobs/                 # Планировщик задач
+│   │   └── autoRepublish.js  # Автоперепубликация (пн 00:00)
+│   ├── services/             # Сервисы данных
+│   │   ├── dataStore.js      # Работа с data.json
+│   │   ├── historyStore.js   # Работа с history.json
+│   │   ├── storageStore.js   # Работа с storage.json
+│   │   └── logging.js        # Логирование
+│   ├── tribunes/             # Логика трибун
+│   │   ├── formatters.js     # Форматирование расписания
+│   │   └── scheduleTimes.js  # Управление временем
+│   ├── utils/                # Вспомогательные функции
+│   │   ├── dates.js          # Работа с датами
+│   │   ├── roles.js          # Проверка ролей
+│   │   ├── embeds.js         # Discord embeds
+│   │   └── ...
+│   └── data/                 # JSON конфигурации
+│       ├── activeDays.json   # Активные дни недели
+│       └── scheduleTimes.json # Время частей
+├── scripts/
+│   └── clear-commands.js     # Очистка команд
+├── config.json               # Конфигурация бота
+├── data.json                 # Данные расписания
+├── history.json              # История изменений
+├── storage.json              # Служебная информация
+└── package.json
+```
 
-## License
-MIT — free to use, modify, and distribute with copyright notice preserved.
+## Конфигурация
 
+### config.json
+```json
+{
+  "token": "BOT_TOKEN",           // Токен бота
+  "channelId": "CHANNEL_ID",      // ID канала для расписания
+  "clientId": "CLIENT_ID",        // ID приложения
+  "guildId": "GUILD_ID",          // ID сервера
+  "broadcasterRoleId": "ROLE_ID", // ID роли Broadcaster
+  "leaveChannelId": "CHANNEL_ID", // ID канала для отгулов
+  "adminRoleId": "ROLE_ID"        // ID роли администратора
+}
+```
+
+### src/data/activeDays.json
+Список активных дней недели для команды `/week1`:
+```json
+["Среда", "Пятница", "Воскресенье"]
+```
+
+### src/data/scheduleTimes.json
+Время частей для каждого дня:
+```json
+{
+  "Среда": { "1": "20:00", "2": "21:00" },
+  "Пятница": { "1": "21:00", "2": "22:00" },
+  "Воскресенье": { "1": "20:00", "2": "21:00" }
+}
+```
+
+## npm скрипты
+- `npm start` — запуск бота
+- `npm run dev` — запуск в режиме разработки (с nodemon)
+- `npm test` — запуск тестов (пока не реализовано)
+
+## Советы по разработке
+- Команды регистрируются автоматически при запуске бота (см. `src/commands/register.js`)
+- Для добавления новых команд создайте файл в `src/commands/` и добавьте в `register.js`
+- Форматирование расписания настраивается в `src/tribunes/formatters.js`
+- Время и активные дни изменяются через команду `/schedule` или напрямую в JSON файлах
+- Автоматическая перепубликация настроена на каждый понедельник в 00:00 (cron: `0 0 * * 1`)
+
+## Устранение неполадок
+- **"Used disallowed intents":** включите необходимые интенты в Discord Developer Portal
+- **Бот не отвечает:** проверьте регистрацию команд и токен/права доступа
+- **Сообщение не обновляется:** убедитесь, что бот может редактировать сообщения в канале
+- **Конфликты регистрации:** проверьте валидацию ролей/слотов и историю изменений
+- **Команды регистрируются как гильдейские:** это нормально, обновление происходит мгновенно
+
+## Лицензия
+MIT — свободное использование, модификация и распространение с сохранением копирайта.
