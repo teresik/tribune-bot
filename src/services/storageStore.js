@@ -1,14 +1,30 @@
 const fs = require('fs');
-const { FILES } = require('../constants');
+const path = require('path');
+
+const DATA_DIR = path.join(__dirname, '..', 'data');
+const STORAGE_PATH = path.join(DATA_DIR, 'storage.json');
+
+function ensureFile() {
+    if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+    if (!fs.existsSync(STORAGE_PATH)) fs.writeFileSync(STORAGE_PATH, '{}', 'utf-8');
+}
 
 function loadStorage() {
     try {
-        if (!fs.existsSync(FILES.STORAGE)) fs.writeFileSync(FILES.STORAGE, '{}', 'utf-8');
-        return JSON.parse(fs.readFileSync(FILES.STORAGE, 'utf-8'));
-    } catch { return {}; }
-}
-function saveStorage(data) {
-    try { fs.writeFileSync(FILES.STORAGE, JSON.stringify(data, null, 2), 'utf-8'); } catch {}
+        ensureFile();
+        return JSON.parse(fs.readFileSync(STORAGE_PATH, 'utf-8'));
+    } catch {
+        return {};
+    }
 }
 
-module.exports = { loadStorage, saveStorage };
+function saveStorage(obj) {
+    try {
+        ensureFile();
+        fs.writeFileSync(STORAGE_PATH, JSON.stringify(obj, null, 2), 'utf-8');
+    } catch (e) {
+        console.error('saveStorage error:', e);
+    }
+}
+
+module.exports = { loadStorage, saveStorage, STORAGE_PATH };
