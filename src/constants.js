@@ -15,7 +15,7 @@ module.exports = {
         SECURE_ROLE_ID: config.secureRoleId || null
     },
     CHANNELS: {
-        LEAVE_CHANNEL_ID: config.leaveChannelId || null,
+        /*LEAVE_CHANNEL_ID: config.leaveChannelId || null,*/
         SCHEDULE_CHANNEL_ID: config.channelId
     },
     SCHEDULE_BY_WEEK: {

@@ -10,7 +10,7 @@ function makeRootPanel() {
         ),
         new ActionRowBuilder().addComponents(
             new ButtonBuilder().setCustomId('panel|history').setLabel('🧾 История').setStyle(ButtonStyle.Secondary),
-            new ButtonBuilder().setCustomId('panel|leave').setLabel('🏖 Отпуск/Отгул').setStyle(ButtonStyle.Success),
+           /* new ButtonBuilder().setCustomId('panel|leave').setLabel('🏖 Отпуск/Отгул').setStyle(ButtonStyle.Success),*/
         ),
         new ActionRowBuilder().addComponents(
             new ButtonBuilder().setCustomId('panel|config').setLabel('⚙ Настройки расписания').setStyle(ButtonStyle.Secondary),

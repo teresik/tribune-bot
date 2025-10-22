@@ -1,4 +1,4 @@
-const { makePromptEmbed, makeSuccessEmbed, makeErrorEmbed } = require('../../utils/embeds');
+/*const { makePromptEmbed, makeSuccessEmbed, makeErrorEmbed } = require('../../utils/embeds');
 const { makeDateSelect, makeLeaveTypeRow } = require('./ui');
 const { makeLeaveAssignRowsFiltered } = require('./lists');
 const { makeLeaveReasonModal } = require('./modals');
@@ -173,3 +173,4 @@ async function handleLeaveModals(interaction) {
 }
 
 module.exports = { slashLeave, handleLeaveButtons, handleLeaveSelects, handleLeaveModals };
+*/

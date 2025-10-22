@@ -5,9 +5,9 @@ const { handlePanelButtons, handlePanelSelects, handlePanelModals } = require('.
 const { week1Command } = require('../commands/week1');
 const { manageCommand } = require('../commands/manage');
 const { historyCommand } = require('../commands/history');
-const { leaveCommand } = require('../commands/leave');
+/*const { leaveCommand } = require('../commands/leave');*/
 
-const { handleLeaveButtons, handleLeaveSelects, handleLeaveModals } = require('../features/leave/handlers');
+/*const { handleLeaveButtons, handleLeaveSelects, handleLeaveModals } = require('../features/leave/handlers');*/
 const { handleManageButtons, handleManageSelects } = require('../features/manage/handlers');
 const { handleSignupButtons } = require('../features/signup/handlers');
 
@@ -34,7 +34,7 @@ module.exports.handleInteractionCreate = async (client, interaction) => {
             if (await handlePanelModals(interaction)) return;
         }
 
-        // LEAVE
+        /*// LEAVE
         if (interaction.isButton()) {
             if (await handleLeaveButtons(interaction, require('../utils/roles').hasBroadcasterPerm)) return;
         }
@@ -43,7 +43,7 @@ module.exports.handleInteractionCreate = async (client, interaction) => {
         }
         if (interaction.isModalSubmit()) {
             if (await handleLeaveModals(interaction)) return;
-        }
+        }*/
 
         // MANAGE
         if (interaction.isButton()) {
